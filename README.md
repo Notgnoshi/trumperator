@@ -36,3 +36,4 @@ Generating haikus with deep learning
     * Can natural language tools come in handy?
 * Data representation
 * And then there's the paper...
+* Add `paper/paper.pdf` to repository on final commit. Avoid tracking a large binary file until then.

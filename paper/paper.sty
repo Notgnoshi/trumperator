@@ -1,0 +1,58 @@
+% !TEX root = paper.tex
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[titletoc]{appendix}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{cancel}
+\usepackage{color}
+\usepackage{eqparbox}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum}
+\usepackage{microtype}      % microtypography
+\usepackage[cache=false]{minted}
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{pgfplots}
+\usepackage{scalerel}
+\usepackage{skull}
+\usepackage{subcaption}
+\usepackage{titling}
+\usepackage{textcomp}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{textcomp}
+\usepackage[nottoc]{tocbibind}
+\usepackage[textsize=small]{todonotes}
+\usepackage[normalem]{ulem}
+
+% Settings
+\definecolor{__minted_background_color}{rgb}{0.95, 0.95, 0.98}
+\definecolor{__minted_highlight_color}{rgb}{0.88, 0.88, 1.0}
+\setminted{autogobble=true,
+           style=tango,
+           breaklines,
+           bgcolor=__minted_background_color,
+           highlightcolor=__minted_highlight_color,
+           % mathescape, % Escape math mode everywhere, not needed with the following.
+           texcomments,  % Enable latex code inside of comments. Useful for referencing equations.
+    }
+\pgfplotsset{compat=1.15}
+
+% Definitions
+
+% Blackboard hacks because NIPS can't do real fonts...
+\newcommand{\R}{I\!\!R}     % real numbers
+\newcommand{\N}{I\!\!N}     % natural numbers
+\newcommand{\C}{I\!\!\!\!C} % complex numbers
+
+% An inline TODO command
+\newcommand\todoinline[2][]{\todo[inline, caption={TODO}, #1]{
+    \begin{minipage}{\textwidth-4pt}#2\end{minipage}}}
