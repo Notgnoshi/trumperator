@@ -3,7 +3,6 @@
 import random
 import sys
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 # Hack to keep keras from allocating the whole damn gpu.
@@ -33,7 +32,7 @@ from keras.preprocessing.sequence import pad_sequences
     has at least ~100k characters. ~1M is better.
 '''
 
-path = "../data/haiku_all.txt"
+path = "../data/haikus.txt"
 text = open(path).read().lower()
 print('corpus length:', len(text))
 
@@ -88,7 +87,7 @@ def on_epoch_end(epoch, logs):
     print('----- Generating text after Epoch: %d' % epoch)
 
     start_index = random.randint(0, len(text) - maxlen - 1)
-    for diversity in [0.2, 0.5, 1.0, 1.2]:
+    for diversity in [0.1, 0.2, 0.5, 1.0, 1.2]:
         print('----- diversity:', diversity)
 
         generated = ''
@@ -116,56 +115,9 @@ def on_epoch_end(epoch, logs):
         print()
     print()
 
-
-def generate_from_model(model):
-    start_index = random.randint(0, len(text) - maxlen - 1)
-
-    for diversity in [0.2, 0.5, 1.0, 1.2]:
-        print()
-        print('----- diversity:', diversity)
-
-        generated = ''
-        sentence = text[start_index : start_index + maxlen]
-        generated += sentence
-        print('----- Generating with seed: "' + sentence + '"')
-        sys.stdout.write(generated)
-
-        tot_lines = 0
-        tot_chars = 0
-
-        while True:
-            if tot_lines > 3 or tot_chars > 120:
-                break
-            x = np.zeros((1, maxlen, len(chars)))
-            for t, char in enumerate(sentence):
-                x[0, t, char_indices[char]] = 1.
-
-            preds = model.predict(x, verbose=0)[0]
-            next_index = sample(preds, diversity)
-            next_char = indices_char[next_index]
-
-            tot_chars += 1
-            generated += next_char
-            if next_char == '\n':
-                tot_lines += 1
-            sentence = sentence[1:] + next_char
-
-            sys.stdout.write(next_char)
-            sys.stdout.flush()
-        print()
-    print()
-
 print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 
 h = model.fit(X, y,
               batch_size=128,
-              epochs=1,
+              epochs=60,
               callbacks=[print_callback])
-
-# print(h.history.keys())
-plt.plot(h.history['loss'], label='training loss')
-plt.ylabel('loss')
-plt.xlabel('iteration')
-plt.title('training loss')
-plt.legend()
-plt.show()
