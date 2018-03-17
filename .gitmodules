@@ -1,0 +1,3 @@
+[submodule "data/trump_tweet_data_archive"]
+	path = data/trump_tweet_data_archive
+	url = git@github.com:bpb27/trump_tweet_data_archive.git
