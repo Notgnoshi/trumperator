@@ -34,7 +34,7 @@ def preprocess(text, use_ascii=True):
     return filter(str.isalpha, text.lower())
 
 
-def load_dataset(files):
+def load_dataset(files, verbose=True):
     """
         Parses the tweets out of the zipped dataset. Returns a generator of preprocessed tweets.
     """
@@ -45,7 +45,8 @@ def load_dataset(files):
             # ZipFile's are collections of zipped files.
             for name in z.namelist():
                 with z.open(name) as f:
-                    print(f'reading {name}')
+                    if verbose:
+                        print(f'reading {name}')
                     dataset += json.load(f)
 
     # Filter out the retweets

@@ -5,22 +5,22 @@ import random
 import sys
 
 import numpy as np
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+from keras.callbacks import LambdaCallback
+from keras.layers.core import Dense, Dropout
+from keras.layers.recurrent import LSTM
+from keras.models import Sequential
+
 from dataset import load_dataset
 
 # Hack to keep keras from allocating the whole damn gpu.
-import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session
-
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 config.gpu_options.visible_device_list = "0"
 #session = tf.Session(config=config)
 set_session(tf.Session(config=config))
 
-from keras.callbacks import LambdaCallback
-from keras.layers.core import Dense, Dropout
-from keras.layers.recurrent import LSTM
-from keras.models import Sequential
 
 '''
     Example script to generate haiku Text.
