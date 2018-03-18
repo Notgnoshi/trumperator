@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+"""
+    Downloads haikus from different collections on the internet.
+"""
+
 import string
 from requests_html import HTMLSession
 

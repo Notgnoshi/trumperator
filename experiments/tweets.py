@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import glob
 import random
 import sys
 
 import numpy as np
+from dataset import load_dataset
 
 # Hack to keep keras from allocating the whole damn gpu.
 import tensorflow as tf
@@ -19,10 +21,6 @@ from keras.callbacks import LambdaCallback
 from keras.layers.core import Dense, Dropout
 from keras.layers.recurrent import LSTM
 from keras.models import Sequential
-from keras.preprocessing.sequence import pad_sequences
-
-
-
 
 '''
     Example script to generate haiku Text.
@@ -32,26 +30,27 @@ from keras.preprocessing.sequence import pad_sequences
     has at least ~100k characters. ~1M is better.
 '''
 
-path = "../data/haikus.txt"
-text = open(path).read().lower()
-print('corpus length:', len(text))
+text = load_dataset(glob.glob('../data/trump_tweet_data_archive/condensed_*.json.zip'))
+# turn the list of tweets into one big corpus
+text = ' '.join(text)
+print(f'corpus length: {len(text)}')
 
 chars = sorted(list(set(text)))
-print('total chars:', len(chars))
+print(f'total chars: {len(chars)}')
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
 
 # cut the text in semi-redundant sequences of maxlen characters
-maxlen = 45
+maxlen = 120
 step = 3
 sentences = []
 next_chars = []
 for i in range(0, len(text) - maxlen, step):
     sentences.append(text[i: i + maxlen])
     next_chars.append(text[i + maxlen])
-print('nb sequences:', len(sentences))
+print(f'sequences: {len(sentences)}')
 
-print('Vectorization...')
+print('Vectorizing input...')
 X = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
 y = np.zeros((len(sentences), len(chars)), dtype=np.bool)
 for i, sentence in enumerate(sentences):
@@ -60,9 +59,11 @@ for i, sentence in enumerate(sentences):
     y[i, char_indices[next_chars[i]]] = 1
 
 print(f'X shape: {X.shape}, Y shape: {y.shape}')
+print(f'X size: {sys.getsizeof(X) * 0.000001 :.3f} MB')
+print(f'y size: {sys.getsizeof(y) * 0.000001 :.3f} MB')
 
 # build the model: single LSTM
-print('Build model...')
+print('Building model...')
 model = Sequential()
 model.add(LSTM(512, input_shape=(maxlen, len(chars))))
 model.add(Dropout(0.2))
@@ -83,17 +84,17 @@ def sample(preds, temperature=1.0):
 
 def on_epoch_end(epoch, logs):
     """Function invoked at end of each epoch. Prints generated text."""
-    print()
-    print('----- Generating text after Epoch: %d' % epoch)
+    print(f'----- Generating text after Epoch: {epoch}')
 
     start_index = random.randint(0, len(text) - maxlen - 1)
     for diversity in [0.1, 0.2, 0.5, 1.0, 1.2]:
-        print('----- diversity:', diversity)
+        print(f'\n\n----- diversity: {diversity}')
 
         generated = ''
         sentence = text[start_index: start_index + maxlen]
         generated += sentence
-        print('----- Generating with seed: "' + sentence + '"')
+        print(f'----- Generating with seed: "{sentence}"')
+        print(f'----- Generated:')
         sys.stdout.write(generated)
 
         # Generate N characters
@@ -117,6 +118,7 @@ def on_epoch_end(epoch, logs):
 
 print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 
+print('Training model...')
 h = model.fit(X, y,
               batch_size=128,
               epochs=60,
