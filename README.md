@@ -49,4 +49,7 @@ Here's an example from the `experiments/model.py` script's output.
 * Write the paper
 * Add `paper/paper.pdf` to repository on final commit. (Don't want to track a binary file that will change a lot)
 * Seed not taken directly from the corpus?
+  * If the seed is taken from the corpus, make it not cross tweet boundaries?
 * Shorter seed?
+* Is this the right data representation?
+  * The dataset is treated as a single corpus, should it instead be a collection of corpuses?
