@@ -206,12 +206,6 @@ def main(train, verbose):
         print(f'number of sequences: {len(sequences)}')
 
     X, y = vectorize_data(corpus, sequences, next_chars, LEN, num_chars, char_to_indices, verbose)
-
-    if verbose:
-        print(f'X shape: {X.shape}, Y shape: {y.shape}')
-        print(f'X size: {sys.getsizeof(X) * 0.000001 :.3f} MB')
-        print(f'y size: {sys.getsizeof(y) * 0.000001 :.3f} MB')
-
     n = len(X)
     # Use 20% validation data
     num_val = int(0.2 * n)
@@ -223,12 +217,9 @@ def main(train, verbose):
 
     if verbose:
         print(f'Number validation samples: {num_val}')
-        print(f'X_train shape: {X_train.shape}, Y_train shape: {y_train.shape}')
-        print(f'X_train size: {sys.getsizeof(X_train) * 0.000001 :.3f} MB')
-        print(f'y_train size: {sys.getsizeof(y_train) * 0.000001 :.3f} MB')
-        print(f'X_val shape: {X_val.shape}, Y_val shape: {y_val.shape}')
-        print(f'X_val size: {sys.getsizeof(X_val) * 0.000001 :.3f} MB')
-        print(f'y_val size: {sys.getsizeof(y_val) * 0.000001 :.3f} MB')
+        print(f'X shape: {X.shape}, Y shape: {y.shape}')
+        print(f'X size: {sys.getsizeof(X) * 0.000001 :.3f} MB')
+        print(f'y size: {sys.getsizeof(y) * 0.000001 :.3f} MB')
 
     if train:
         model = build_model(LEN, num_chars, verbose)
