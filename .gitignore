@@ -1,4 +1,10 @@
+# Editor settings
 .vscode
+
+# Trained models
+*.json
+*.h5
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
