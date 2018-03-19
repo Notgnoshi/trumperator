@@ -21,22 +21,32 @@ Note that scraping the tweets myself isn't quite as simple as I'd hoped. The off
 
 ## Generating tweets
 
-For now I just have an experimental script that generates tweets as it trains.
+Here's an example from the `experiments/model.py` script's output.
+
+> Generating with diversity: 0.2
+>
+> Generating with seed: "as great seeing and yesterday a smart negotiator would us"
+>
+> Generated:
+>
+> as great seeing and yesterday a smart negotiator would use the best thing they are doing a great job he is a great guy and the most important to be the next president of the united states  and the fake news media who can be the next president of the world
 
 ## TODO
 
-* Save the trained model
 * Add regularization?
-* Plot loss, etc.
 * Figure out how the generation actually works
 * What is the structure of the data?
 * Given a trained model, generate a number of tweets
 * Given a bunch of generated tweets, score them somehow (online poll?)
+  * Grammar checker (NLTK has a grammar parser)
+  * Second neural network
 * Figure out what exactly the diversity stuff is
 * Make training faster?
+* Experiment with LSTM options
+* Experiment with model size/depth
 * Filter the training data better?
-* Add validation data?
+  * Leave @mentions in the dataset
 * Write the paper
 * Add `paper/paper.pdf` to repository on final commit. (Don't want to track a binary file that will change a lot)
 * Seed not taken directly from the corpus?
-* Shorter seed
+* Shorter seed?
