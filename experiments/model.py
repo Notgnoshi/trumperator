@@ -61,6 +61,7 @@ def build_model(seq_length, num_chars, verbose):
         print('Building model...')
     model = Sequential()
     # TODO: Model size/depth?
+    # TODO: LSTM options?
     model.add(LSTM(256, input_shape=(seq_length, num_chars)))
     # TODO: Regularization?
     # model.add(Dropout(0.2))
@@ -183,7 +184,7 @@ def generate_sequence(model, corpus, seed, length, diversities,
             print(generated)
 
 
-def main(verbose):
+def main(train, verbose):
     corpus = load_dataset(glob('../data/trump_tweet_data_archive/condensed_*.json.zip'), verbose)
     corpus = ' '.join(corpus)
     characters = sorted(list(set(corpus)))
@@ -204,7 +205,6 @@ def main(verbose):
         print(f'num characters: {num_chars}')
         print(f'number of sequences: {len(sequences)}')
 
-    # TODO: Split into training and validation data
     X, y = vectorize_data(corpus, sequences, next_chars, LEN, num_chars, char_to_indices, verbose)
 
     if verbose:
@@ -230,12 +230,12 @@ def main(verbose):
         print(f'X_val size: {sys.getsizeof(X_val) * 0.000001 :.3f} MB')
         print(f'y_val size: {sys.getsizeof(y_val) * 0.000001 :.3f} MB')
 
-    # model = build_model(LEN, num_chars, verbose)
-    # h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
-    # save_model(model, verbose, filename='latest')
-
-    # TODO: train/load as argument
-    model = load_model('latest', verbose)
+    if train:
+        model = build_model(LEN, num_chars, verbose)
+        h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
+        save_model(model, verbose, filename='latest')
+    else:
+        model = load_model('latest', verbose)
 
     # Generate text from seeds randomly taken from the corpus
     indices = [random.randint(0, len(corpus) - LEN - 1) for _ in range(10)]
@@ -250,4 +250,5 @@ def main(verbose):
 
 
 if __name__ == '__main__':
-    main(verbose=True)
+    train = '--train' in sys.argv
+    main(verbose=True, train=train)
