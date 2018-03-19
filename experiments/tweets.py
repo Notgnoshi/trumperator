@@ -23,7 +23,7 @@ set_session(tf.Session(config=config))
 
 
 '''
-    Example script to generate haiku Text.
+    Example script to generate tweets.
     It is recommended to run this script on GPU, as recurrent
     networks are quite computationally intensive.
     If you try this script on new data, make sure your corpus

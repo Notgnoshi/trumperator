@@ -132,7 +132,7 @@ def save_model(model, verbose, filename=None):
         print(f'saving model weights to {filename}.h5')
 
     with open(f'{filename}.json', 'w') as json:
-        json.write(model.to_json)
+        json.write(model.to_json())
     model.save_weights(f'{filename}.h5')
 
 
@@ -146,7 +146,7 @@ def load_model(base_filename, verbose):
         print(f'Loading model weights from {base_filename}.h5')
 
     with open(f'{base_filename}.json') as json:
-        model = model_from_json(json)
+        model = model_from_json(json.read())
     with open(f'{base_filename}.h5') as hdf5:
         model.load_weights(f'{base_filename}.h5')
     return model
@@ -170,7 +170,7 @@ def generate_sequence(model, corpus, seed, length, diversities,
             print(f'Generated:')
 
         for _ in range(length):
-            X_pred = np.zeroes((1, seq_length, num_chars))
+            X_pred = np.zeros((1, seq_length, num_chars))
             for t, c in enumerate(sequence):
                 X_pred[0, t, char_to_indices[c]] = 1
 
@@ -216,10 +216,12 @@ def main(verbose):
 
     model = build_model(LEN, num_chars, verbose)
     h = train_model(model, X, y, verbose=verbose)
-    save_model(model, verbose)
+    save_model(model, verbose, filename='latest')
 
-    # TODO: These will probably have to be LEN chars long
-    seeds = ['republicans', 'hate', 'fake news', 'golf']
+    # model = load_model('latest', verbose)
+
+    # TODO: These will probably have to be LEN chars long?
+    seeds = ['republicans', 'democrats', 'hate', 'fake news', 'golf']
     generated = []
     for seed in seeds:
         generate_sequence(model, corpus, seed, 200, [0.05, 0.1, 0.2, 0.5], LEN, num_chars,
