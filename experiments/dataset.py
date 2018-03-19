@@ -11,8 +11,16 @@ def remove_urls(vTEXT):
     vTEXT = re.sub(r'(https|http)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*\b', '', vTEXT, flags=re.MULTILINE)
     return vTEXT
 
+def remove_mentions(vTEXT):
+    """
+        Remove @mentions from a given string.
+    """
+    vTEXT = re.sub(r'@\w+', '', vTEXT, flags=re.MULTILINE)
+    return vTEXT
+
 
 # Redefine what 'alphabet' means so we don't filter out spaces and hashtags.
+# TODO: Consider leaving '@'s in
 ALPHABET = frozenset(string.ascii_lowercase + ' ' + '#')
 
 
@@ -53,8 +61,9 @@ def load_dataset(files, verbose=True):
     dataset = filter(lambda x: x['is_retweet'] is False, dataset)
     # Get only the text
     dataset = (t['text']for t in dataset)
+    # Remove @mentions from the tweets.
+    dataset = (remove_mentions(t) for t in dataset)
     # Remove URLs from the tweets.
-    # TODO: Consider removing username mentions?
     dataset = (remove_urls(t) for t in dataset)
     # Preprocess each tweet, filtering out nonascii alphabetic
     dataset = (''.join(preprocess(t)) for t in dataset)
