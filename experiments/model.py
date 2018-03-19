@@ -230,14 +230,16 @@ def main(verbose):
         print(f'X_val size: {sys.getsizeof(X_val) * 0.000001 :.3f} MB')
         print(f'y_val size: {sys.getsizeof(y_val) * 0.000001 :.3f} MB')
 
-    model = build_model(LEN, num_chars, verbose)
-    h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
-    save_model(model, verbose, filename='latest')
+    # model = build_model(LEN, num_chars, verbose)
+    # h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
+    # save_model(model, verbose, filename='latest')
 
-    # model = load_model('latest', verbose)
+    # TODO: train/load as argument
+    model = load_model('latest', verbose)
 
-    # TODO: These will probably have to be LEN chars long?
-    seeds = ['republicans', 'democrats', 'hate', 'fake news', 'golf']
+    # Generate text from seeds randomly taken from the corpus
+    indices = [random.randint(0, len(corpus) - LEN - 1) for _ in range(10)]
+    seeds = [corpus[i: i + LEN] for i in indices]
     generated = []
     for seed in seeds:
         generate_sequence(model, corpus, seed, 200, [0.05, 0.1, 0.2, 0.5], LEN, num_chars,
