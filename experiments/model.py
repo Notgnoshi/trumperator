@@ -10,7 +10,9 @@ import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 from keras.layers import Dense, Dropout
 # CuDNNLSTM is a CUDA accelerated LSTM layer
-from keras.layers import CuDNNLSTM
+# (Not so good for running (even trained) models on a laptop)
+# from keras.layers import CuDNNLSTM
+from keras.layers import LSTM
 from keras.models import Sequential, model_from_json
 
 from dataset import load_dataset
@@ -63,7 +65,7 @@ def build_model(seq_length, num_chars, verbose):
     model = Sequential()
     # TODO: Model size/depth?
     # TODO: LSTM options?
-    model.add(CuDNNLSTM(units=512, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    model.add(LSTM(units=512, input_shape=(seq_length, num_chars), unit_forget_bias=True))
     model.add(Dropout(0.2))
     # TODO: Regularization?
     model.add(Dense(num_chars, activation='softmax'))
@@ -225,9 +227,9 @@ def main(train, verbose):
     if train:
         model = build_model(LEN, num_chars, verbose)
         h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
-        save_model(model, verbose, filename='512dropout')
+        save_model(model, verbose, filename='models/512dropout')
     else:
-        model = load_model('latest', verbose)
+        model = load_model('models/512dropout', verbose)
 
     # Generate text from seeds randomly taken from the corpus
     indices = [random.randint(0, len(corpus) - LEN - 1) for _ in range(10)]
