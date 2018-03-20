@@ -35,6 +35,8 @@ Or my personal favorite (so far)
 
 > should be fired the office with a real congress comments on his republican spirit and ratings with a terrible many photo of @mittromney is always a fair #bush
 
+> the best president obama is a great people to be a great president i will be interviewed on @foxandfriends tonight at pm enjoy
+
 ## TODO
 
 * Add regularization?
