@@ -31,6 +31,10 @@ Here's an example from the `experiments/model.py` script's output.
 >
 > as great seeing and yesterday a smart negotiator would use the best thing they are doing a great job he is a great guy and the most important to be the next president of the united states  and the fake news media who can be the next president of the world
 
+Or my personal favorite (so far)
+
+> should be fired the office with a real congress comments on his republican spirit and ratings with a terrible many photo of @mittromney is always a fair #bush
+
 ## TODO
 
 * Add regularization?
@@ -40,6 +44,7 @@ Here's an example from the `experiments/model.py` script's output.
 * Given a bunch of generated tweets, score them somehow (online poll?)
   * Grammar checker (NLTK has a grammar parser)
   * Second neural network
+    * Dr. Pyeatt leans this way, and actually to focus on this. (Classify tweet as written by user X or not written by user X.) I would need to generate a dataset containing tweets from multiple users.
 * Figure out what exactly the diversity stuff is
 * Make training faster?
 * Experiment with LSTM options
