@@ -19,9 +19,8 @@ def remove_mentions(vTEXT):
     return vTEXT
 
 
-# Redefine what 'alphabet' means so we don't filter out spaces and hashtags.
-# TODO: Consider leaving '@'s in
-ALPHABET = frozenset(string.ascii_lowercase + ' ' + '#')
+# Redefine what 'alphabet' means so we don't filter out spaces, @mentions, and hashtags.
+ALPHABET = frozenset(string.ascii_lowercase + ' ' + '#' + '@')
 
 
 def preprocess(text, use_ascii=True):
@@ -61,8 +60,8 @@ def load_dataset(files, verbose=True):
     dataset = filter(lambda x: x['is_retweet'] is False, dataset)
     # Get only the text
     dataset = (t['text']for t in dataset)
-    # Remove @mentions from the tweets.
-    dataset = (remove_mentions(t) for t in dataset)
+    # # Remove @mentions from the tweets.
+    # dataset = (remove_mentions(t) for t in dataset)
     # Remove URLs from the tweets.
     dataset = (remove_urls(t) for t in dataset)
     # Preprocess each tweet, filtering out nonascii alphabetic

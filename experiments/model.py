@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
-from keras.layers.core import Dense, Dropout
-from keras.layers.recurrent import LSTM
+from keras.layers import Dense, Dropout
+# CuDNNLSTM is a CUDA accelerated LSTM layer
+from keras.layers import CuDNNLSTM
 from keras.models import Sequential, model_from_json
 
 from dataset import load_dataset
@@ -62,9 +63,9 @@ def build_model(seq_length, num_chars, verbose):
     model = Sequential()
     # TODO: Model size/depth?
     # TODO: LSTM options?
-    model.add(LSTM(256, input_shape=(seq_length, num_chars)))
+    model.add(CuDNNLSTM(units=512, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    model.add(Dropout(0.2))
     # TODO: Regularization?
-    # model.add(Dropout(0.2))
     model.add(Dense(num_chars, activation='softmax'))
 
     # TODO: Try different loss functions, optimizers, and metrics
@@ -93,7 +94,9 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True):
     BATCH_SIZE = 128
     EPOCHS = 50
 
-    if X_val and y_val:
+    if X_val is not None and y_val is not None:
+        if verbose:
+            print(f'Training with {len(X_val)} validation samples')
         h = model.fit(X, y,
                       batch_size=BATCH_SIZE,
                       epochs=EPOCHS,
@@ -108,7 +111,7 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True):
 
     plt.plot(h.history['loss'], label='training loss')
 
-    if X_val and y_val:
+    if X_val is not None and y_val is not None:
         plt.plot(h.history['val_loss'], label='validation loss')
     plt.ylabel('loss')
     plt.xlabel('epochs')
@@ -156,8 +159,6 @@ def generate_sequence(model, corpus, seed, length, diversities,
     """
         Given a model, generate a text given some seed.
     """
-    # TODO: Does len(seed) == LEN?
-
     for diversity in diversities:
         generated = ''
         sequence = seed
@@ -209,11 +210,11 @@ def main(train, verbose):
     n = len(X)
     # Use 20% validation data
     num_val = int(0.2 * n)
-    X_val = X[num_val:]
-    y_val = y[num_val:]
+    X_val = X[n - num_val:]
+    y_val = y[n - num_val:]
 
-    X_train = X[:num_val]
-    y_train = y[:num_val]
+    X_train = X[:n - num_val]
+    y_train = y[:n - num_val]
 
     if verbose:
         print(f'Number validation samples: {num_val}')
@@ -224,7 +225,7 @@ def main(train, verbose):
     if train:
         model = build_model(LEN, num_chars, verbose)
         h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
-        save_model(model, verbose, filename='latest')
+        save_model(model, verbose, filename='512dropout')
     else:
         model = load_model('latest', verbose)
 
