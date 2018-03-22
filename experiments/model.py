@@ -52,8 +52,10 @@ def vectorize_data(corpus, sequences, next_chars, seq_length, num_chars, char_to
         for t, char in enumerate(seq):
             X[i, t, char_to_indices[char]] = 1
         y[i, char_to_indices[next_chars[i]]] = 1
-
-    return X, y
+    # An array of indices
+    I = np.arange(X.shape[0])
+    np.random.shuffle(I)
+    return X[I], y[I]
 
 
 def build_model(seq_length, num_chars, verbose):
@@ -94,7 +96,7 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True):
         Will also save loss plots.
     """
     BATCH_SIZE = 128
-    EPOCHS = 50
+    EPOCHS = 30
 
     if X_val is not None and y_val is not None:
         if verbose:
@@ -197,7 +199,7 @@ def main(train, verbose):
     indices_to_char = dict((i, c) for i, c in enumerate(characters))
 
     # The length of the sequences
-    LEN = 60
+    LEN = 25
     # How the far apart the sequences are spaced
     STEP = 3
 
@@ -227,9 +229,9 @@ def main(train, verbose):
     if train:
         model = build_model(LEN, num_chars, verbose)
         h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
-        save_model(model, verbose, filename='models/512dropout')
+        save_model(model, verbose, filename='512dropout')
     else:
-        model = load_model('models/512dropout', verbose)
+        model = load_model('512dropout', verbose)
 
     # Generate text from seeds randomly taken from the corpus
     indices = [random.randint(0, len(corpus) - LEN - 1) for _ in range(10)]

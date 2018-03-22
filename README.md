@@ -60,3 +60,19 @@ Or my personal favorite (so far)
 * Shorter seed?
 * Is this the right data representation?
   * The dataset is treated as a single corpus, should it instead be a collection of corpuses?
+* Different models to try:
+  * 512 node with dropout
+  * 512 node without dropout
+  * 256 node with dropout
+  * 256 node without dropout
+  * 128 node with dropout
+  * 128 node without dropout
+* Model options:
+  * LSTM layer options
+  * Cosine proximity
+  * Adagrad
+  * Shorter sequences (20 chars?)
+* After training full models, look for elbows and train for less epochs
+* Scrape training data for second network
+* build second network
+* Train second network
