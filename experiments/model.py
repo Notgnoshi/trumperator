@@ -4,6 +4,11 @@ import sys
 from datetime import datetime
 from glob import glob
 
+# Hack to enable matplotlib to save a figure without an X server running (SSH sessions)
+# https://stackoverflow.com/a/4706614
+import matplotlib
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -189,7 +194,7 @@ def generate_sequence(model, corpus, seed, length, diversities,
             print(generated)
 
 
-def main(train, verbose):
+def main(base_filename, train, verbose):
     corpus = load_dataset(glob('../data/trump_tweet_data_archive/condensed_*.json.zip'), verbose)
     corpus = ' '.join(corpus)
     characters = sorted(list(set(corpus)))
@@ -199,7 +204,7 @@ def main(train, verbose):
     indices_to_char = dict((i, c) for i, c in enumerate(characters))
 
     # The length of the sequences
-    LEN = 25
+    LEN = 40
     # How the far apart the sequences are spaced
     STEP = 3
 
@@ -210,6 +215,7 @@ def main(train, verbose):
         print(f'num characters: {num_chars}')
         print(f'number of sequences: {len(sequences)}')
 
+    # The data is shuffled so the validation data isn't simply the latest 20% of tweets
     X, y = vectorize_data(corpus, sequences, next_chars, LEN, num_chars, char_to_indices, verbose)
     n = len(X)
     # Use 20% validation data
@@ -229,9 +235,9 @@ def main(train, verbose):
     if train:
         model = build_model(LEN, num_chars, verbose)
         h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
-        save_model(model, verbose, filename='512dropout')
+        save_model(model, verbose, filename=base_filename)
     else:
-        model = load_model('512dropout', verbose)
+        model = load_model(base_filename, verbose)
 
     # Generate text from seeds randomly taken from the corpus
     indices = [random.randint(0, len(corpus) - LEN - 1) for _ in range(10)]
@@ -247,4 +253,4 @@ def main(train, verbose):
 
 if __name__ == '__main__':
     train = '--train' in sys.argv
-    main(verbose=True, train=train)
+    main('512dropout40', verbose=True, train=train)
