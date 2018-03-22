@@ -52,12 +52,10 @@ Or my personal favorite (so far)
 * Experiment with LSTM options
 * Experiment with model size/depth
 * Filter the training data better?
-  * Leave @mentions in the dataset
 * Write the paper
 * Add `paper/paper.pdf` to repository on final commit. (Don't want to track a binary file that will change a lot)
 * Seed not taken directly from the corpus?
   * If the seed is taken from the corpus, make it not cross tweet boundaries?
-* Shorter seed?
 * Is this the right data representation?
   * The dataset is treated as a single corpus, should it instead be a collection of corpuses?
 * Different models to try:
@@ -71,7 +69,6 @@ Or my personal favorite (so far)
   * LSTM layer options
   * Cosine proximity
   * Adagrad
-  * Shorter sequences (20 chars?)
 * After training full models, look for elbows and train for less epochs
 * Scrape training data for second network
 * build second network
