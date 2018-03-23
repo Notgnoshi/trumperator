@@ -2,15 +2,18 @@
 import random
 import sys
 from datetime import datetime
+import itertools
 from glob import glob
 
 # Hack to enable matplotlib to save a figure without an X server running (SSH sessions)
 # https://stackoverflow.com/a/4706614
 import matplotlib
+# Needs to be ran before `import matplotlib.pyplot as plt`
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 import numpy as np
+import spacy
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 from keras.layers import Dense, Dropout
@@ -28,6 +31,9 @@ config.gpu_options.allow_growth = True
 config.gpu_options.visible_device_list = "0"
 #session = tf.Session(config=config)
 set_session(tf.Session(config=config))
+
+# Load the english language
+nlp = spacy.load('en')
 
 
 def chunk_text(corpus, length, step):
@@ -73,7 +79,7 @@ def build_model(seq_length, num_chars, verbose):
     # TODO: Model size/depth?
     # TODO: LSTM options?
     model.add(LSTM(units=512, input_shape=(seq_length, num_chars), unit_forget_bias=True))
-    model.add(Dropout(0.2))
+    # model.add(Dropout(0.2))
     # TODO: Regularization?
     model.add(Dense(num_chars, activation='softmax'))
 
@@ -168,12 +174,14 @@ def generate_sequence(model, corpus, seed, length, diversities,
     """
         Given a model, generate a text given some seed.
     """
+    g = []
     for diversity in diversities:
         generated = ''
         sequence = seed
         generated += seed
 
         if verbose:
+            print('='*10)
             print(f'Generating with diversity: {diversity}')
             print(f'Generating with seed: "{seed}"')
             print(f'Generated:')
@@ -189,9 +197,18 @@ def generate_sequence(model, corpus, seed, length, diversities,
             generated += next_char
             # TODO: Don't use a list for this, use a queue
             sequence = sequence[1:] + next_char
-
+        g.append(generated)
         if verbose:
             print(generated)
+    return g
+
+
+def parse_sentences(document):
+    """
+        Parses the sentences out of the given document.
+        Returns a generator.
+    """
+    return nlp(document).sents
 
 
 def main(base_filename, train, verbose):
@@ -244,8 +261,16 @@ def main(base_filename, train, verbose):
     seeds = [corpus[i: i + LEN] for i in indices]
     generated = []
     for seed in seeds:
-        generate_sequence(model, corpus, seed, 200, [0.05, 0.1, 0.2, 0.5], LEN, num_chars,
-                          char_to_indices, indices_to_char, verbose)
+        docs = generate_sequence(model, corpus, seed, 200, [0.05, 0.1, 0.2, 0.5], LEN, num_chars,
+                                 char_to_indices, indices_to_char, verbose)
+
+        # Parsing sentences from a poorly formatted document with no punctuation is quite slow
+        # sentences = itertools.chain.from_iterable(parse_sentences(doc) for doc in docs)
+        # if verbose:
+        #     print('='*10)
+        #     print('Parsed sentences:')
+        #     for s in sentences:
+        #         print(s)
 
     for seq in generated:
         print(seq)
@@ -253,4 +278,4 @@ def main(base_filename, train, verbose):
 
 if __name__ == '__main__':
     train = '--train' in sys.argv
-    main('512dropout40', verbose=True, train=train)
+    main('models/512-40', verbose=True, train=train)

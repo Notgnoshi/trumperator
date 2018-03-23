@@ -10,6 +10,9 @@ Generating Trump tweets with deep learning
 * Numpy
 * Requests-HTML
 * [trump_tweet_data_archive](http://www.trumptwitterarchive.com/)
+* spaCy NLP toolkit
+
+  Install by running `sudo -H pip install --upgrade spacy` and then `sudo -H python3 -m spacy download en` to download the English language datasets.
 
 ## Getting the [dataset](https://github.com/bpb27/trump_tweet_data_archive)
 
