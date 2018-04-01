@@ -19,27 +19,14 @@ def remove_mentions(vTEXT):
     return vTEXT
 
 
-# Redefine what 'alphabet' means so we don't filter out spaces, @mentions, and hashtags.
-ALPHABET = frozenset(string.ascii_lowercase + ' ' + '#' + '@')
+ALPHABET = frozenset(string.ascii_lowercase + string.punctuation + ' #@')
 
 
-def preprocess(text, use_ascii=True):
+def preprocess(text, alphabet):
     """
-        Preprocess text. Converts to lowercase and filters non-alphabetic characters.
-        Defaults to defining alphabetic characters as ascii-alphabetic.
-
-        Examples:
-        >>> text = 'ABC.,#'
-        >>> ''.join(preprocess(text))
-        'abc'
-        >>> text = 'ÈÆÖÉEAEOE,.%'
-        >>> ''.join(preprocess(text, use_ascii=False))
-        'èæöéeaeoe'
+        Preprocess text using the frozenset `alphabet` given.
     """
-    if use_ascii:
-        return filter(ALPHABET.__contains__, text.lower())
-    return filter(str.isalpha, text.lower())
-
+    return filter(alphabet.__contains__, text.lower())
 
 def load_dataset(files, verbose=True):
     """
@@ -60,11 +47,9 @@ def load_dataset(files, verbose=True):
     dataset = filter(lambda x: x['is_retweet'] is False, dataset)
     # Get only the text
     dataset = (t['text']for t in dataset)
-    # # Remove @mentions from the tweets.
-    # dataset = (remove_mentions(t) for t in dataset)
     # Remove URLs from the tweets.
     dataset = (remove_urls(t) for t in dataset)
     # Preprocess each tweet, filtering out nonascii alphabetic
-    dataset = (''.join(preprocess(t)) for t in dataset)
+    dataset = (''.join(preprocess(t, ALPHABET)) for t in dataset)
 
     return dataset
