@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
+import itertools
 import random
 import sys
 from datetime import datetime
-import itertools
 from glob import glob
+
+import matplotlib
 
 # Hack to enable matplotlib to save a figure without an X server running (SSH sessions)
 # https://stackoverflow.com/a/4706614
-import matplotlib
 # Needs to be ran before `import matplotlib.pyplot as plt`
 matplotlib.use('Agg')
 
@@ -16,11 +17,7 @@ import numpy as np
 import spacy
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
-from keras.layers import Dense, Dropout
-# CuDNNLSTM is a CUDA accelerated LSTM layer
-# (Not so good for running (even trained) models on a laptop)
-# from keras.layers import CuDNNLSTM
-from keras.layers import LSTM
+from keras.layers import LSTM, Dense, Dropout
 from keras.models import Sequential, model_from_json
 
 from dataset import load_dataset
@@ -51,9 +48,9 @@ def chunk_text(corpus, length, step):
     return sequences, next_chars
 
 
-def vectorize_data(corpus, sequences, next_chars, seq_length, num_chars, char_to_indices, verbose):
+def vectorize_data(sequences, next_chars, seq_length, num_chars, char_to_indices, verbose):
     """
-        Given the textual dataset, vectorize it.
+        Given the textual dataset, shuffle and vectorize it.
     """
     if verbose:
         print('Vectorizing sequences...')
@@ -79,7 +76,7 @@ def build_model(seq_length, num_chars, verbose):
     # TODO: Model size/depth?
     # TODO: LSTM options?
     model.add(LSTM(units=512, input_shape=(seq_length, num_chars), unit_forget_bias=True))
-    # model.add(Dropout(0.2))
+    model.add(Dropout(0.1))
     # TODO: Regularization?
     model.add(Dense(num_chars, activation='softmax'))
 
@@ -106,8 +103,9 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True):
 
         Will also save loss plots.
     """
+    # Default is 32.
     BATCH_SIZE = 128
-    EPOCHS = 30
+    EPOCHS = 20
 
     if X_val is not None and y_val is not None:
         if verbose:
@@ -203,6 +201,16 @@ def generate_sequence(model, corpus, seed, length, diversities,
     return g
 
 
+def save_generated(generated, filename):
+    """
+        Saves the generated text strings to the given file.
+    """
+    with open(f'{filename}-sample.txt', 'a') as f:
+        # Flatten the generated list
+        for g in generated:
+            f.write(g + '\n')
+
+
 def parse_sentences(document):
     """
         Parses the sentences out of the given document.
@@ -221,7 +229,7 @@ def main(base_filename, train, verbose):
     indices_to_char = dict((i, c) for i, c in enumerate(characters))
 
     # The length of the sequences
-    LEN = 40
+    LEN = 60
     # How the far apart the sequences are spaced
     STEP = 3
 
@@ -233,7 +241,7 @@ def main(base_filename, train, verbose):
         print(f'number of sequences: {len(sequences)}')
 
     # The data is shuffled so the validation data isn't simply the latest 20% of tweets
-    X, y = vectorize_data(corpus, sequences, next_chars, LEN, num_chars, char_to_indices, verbose)
+    X, y = vectorize_data(sequences, next_chars, LEN, num_chars, char_to_indices, verbose)
     n = len(X)
     # Use 20% validation data
     num_val = int(0.2 * n)
@@ -261,8 +269,9 @@ def main(base_filename, train, verbose):
     seeds = [corpus[i: i + LEN] for i in indices]
     generated = []
     for seed in seeds:
-        docs = generate_sequence(model, corpus, seed, 200, [0.05, 0.1, 0.2, 0.5], LEN, num_chars,
+        docs = generate_sequence(model, corpus, seed, 280, [0.05, 0.1, 0.2, 0.5], LEN, num_chars,
                                  char_to_indices, indices_to_char, verbose)
+        save_generated(docs, base_filename)
 
         # Parsing sentences from a poorly formatted document with no punctuation is quite slow
         # sentences = itertools.chain.from_iterable(parse_sentences(doc) for doc in docs)
@@ -278,4 +287,4 @@ def main(base_filename, train, verbose):
 
 if __name__ == '__main__':
     train = '--train' in sys.argv
-    main('models/512-40', verbose=True, train=train)
+    main('models/512dropout20', verbose=True, train=train)
