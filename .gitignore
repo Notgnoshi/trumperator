@@ -2,6 +2,7 @@
 .vscode
 
 # Trained models
+experiments/models/
 *.json
 *.h5
 *.png
