@@ -12,7 +12,7 @@ Generating Trump tweets with deep learning
 * [trump_tweet_data_archive](http://www.trumptwitterarchive.com/)
 * spaCy NLP toolkit
 
-  Install by running `sudo -H pip install --upgrade spacy` and then `sudo -H python3 -m spacy download en` to download the English language datasets.
+  Install by running `sudo -H pip install --upgrade spacy` and then `sudo -H python3 -m spacy download en` to download the English language model.
 
 ## Getting the [dataset](https://github.com/bpb27/trump_tweet_data_archive)
 
@@ -42,15 +42,14 @@ Or my personal favorite (so far)
 
 ## TODO
 
-* Add regularization?
-* Figure out how the generation actually works
-* What is the structure of the data?
 * Given a trained model, generate a number of tweets
 * Given a bunch of generated tweets, score them somehow (online poll?)
   * Grammar checker (NLTK has a grammar parser)
   * Second neural network
     * Dr. Pyeatt leans this way, and actually to focus on this. (Classify tweet as written by user X or not written by user X.) I would need to generate a dataset containing tweets from multiple users.
+  * Online poll, filter 'good' generated tweets by hand.
 * Figure out what exactly the diversity stuff is
+* Use a smaller training set? (Last two years of tweets?)
 * Make training faster?
 * Experiment with LSTM options
 * Experiment with model size/depth
@@ -61,18 +60,7 @@ Or my personal favorite (so far)
   * If the seed is taken from the corpus, make it not cross tweet boundaries?
 * Is this the right data representation?
   * The dataset is treated as a single corpus, should it instead be a collection of corpuses?
-* Different models to try:
-  * 512 node with dropout
-  * 512 node without dropout
-  * 256 node with dropout
-  * 256 node without dropout
-  * 128 node with dropout
-  * 128 node without dropout
 * Model options:
   * LSTM layer options
-  * Cosine proximity
-  * Adagrad
 * After training full models, look for elbows and train for less epochs
-* Scrape training data for second network
-* build second network
-* Train second network
+* Add `requirements.txt` for `pip` to install from?
