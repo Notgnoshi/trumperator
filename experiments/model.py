@@ -17,8 +17,9 @@ import numpy as np
 import spacy
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
-from keras.layers import LSTM, Dense, Dropout
+from keras.layers import LSTM, Dense, BatchNormalization
 from keras.models import Sequential, model_from_json
+from keras.optimizers import SGD
 
 from dataset import load_dataset
 
@@ -75,13 +76,13 @@ def build_model(seq_length, num_chars, verbose):
     model = Sequential()
     # TODO: Model size/depth?
     # TODO: LSTM options?
-    model.add(LSTM(units=512, input_shape=(seq_length, num_chars), unit_forget_bias=True))
-    model.add(Dropout(0.1))
-    # TODO: Regularization?
+    model.add(LSTM(units=128, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    model.add(BatchNormalization())
     model.add(Dense(num_chars, activation='softmax'))
 
-    # TODO: Try different loss functions, optimizers, and metrics
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+    # Use SGD with gradient clipping and Nesterov momentum
+    opt = SGD(lr=0.01, clipnorm=1.0, nesterov=True)
+    model.compile(loss='categorical_crossentropy', optimizer=opt)
     return model
 
 
@@ -287,4 +288,4 @@ def main(base_filename, train, verbose):
 
 if __name__ == '__main__':
     train = '--train' in sys.argv
-    main('models/512dropout20', verbose=True, train=train)
+    main('models/128sgd-clip-nesterov-batchnorm', verbose=True, train=train)
