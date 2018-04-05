@@ -76,7 +76,7 @@ def build_model(seq_length, num_chars, verbose):
     model = Sequential()
     # TODO: Model size/depth?
     # TODO: LSTM options?
-    model.add(LSTM(units=128, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    model.add(LSTM(units=256, input_shape=(seq_length, num_chars), unit_forget_bias=True))
     model.add(BatchNormalization())
     model.add(Dense(num_chars, activation='softmax'))
 
@@ -98,7 +98,7 @@ def sample_predictions(preds, temperature=1.0):
     return np.argmax(probas)
 
 
-def train_model(model, X, y, X_val=None, y_val=None, verbose=True):
+def train_model(model, X, y, X_val=None, y_val=None, verbose=True, filename='training_loss'):
     """
         Trains the given model. Will use validation data if given.
 
@@ -106,7 +106,7 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True):
     """
     # Default is 32.
     BATCH_SIZE = 128
-    EPOCHS = 20
+    EPOCHS = 200
 
     if X_val is not None and y_val is not None:
         if verbose:
@@ -131,7 +131,7 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True):
     plt.xlabel('epochs')
     plt.title('training loss')
     plt.legend()
-    plt.savefig('training_loss.png')
+    plt.savefig(f'{filename}.png')
 
     return h
 
@@ -260,7 +260,7 @@ def main(base_filename, train, verbose):
 
     if train:
         model = build_model(LEN, num_chars, verbose)
-        h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose)
+        h = train_model(model, X_train, y_train, X_val=X_val, y_val=y_val, verbose=verbose, filename=base_filename)
         save_model(model, verbose, filename=base_filename)
     else:
         model = load_model(base_filename, verbose)
@@ -288,4 +288,4 @@ def main(base_filename, train, verbose):
 
 if __name__ == '__main__':
     train = '--train' in sys.argv
-    main('models/128sgd-clip-nesterov-batchnorm', verbose=True, train=train)
+    main('models/256sgd-clip-nesterov-batchnorm200', verbose=True, train=train)
