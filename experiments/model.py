@@ -19,7 +19,7 @@ import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 from keras.layers import LSTM, Dense, BatchNormalization
 from keras.models import Sequential, model_from_json
-from keras.optimizers import SGD
+from keras.optimizers import SGD, RMSprop
 
 from dataset import load_dataset
 
@@ -81,7 +81,8 @@ def build_model(seq_length, num_chars, verbose):
     model.add(Dense(num_chars, activation='softmax'))
 
     # Use SGD with gradient clipping and Nesterov momentum
-    opt = SGD(lr=0.01, clipnorm=1.0, nesterov=True)
+    # opt = SGD(lr=0.1, clipnorm=1.0, nesterov=True)
+    opt = RMSprop(clipnorm=1.0)
     model.compile(loss='categorical_crossentropy', optimizer=opt)
     return model
 
@@ -106,7 +107,7 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True, filename='tra
     """
     # Default is 32.
     BATCH_SIZE = 128
-    EPOCHS = 200
+    EPOCHS = 20
 
     if X_val is not None and y_val is not None:
         if verbose:
@@ -288,4 +289,4 @@ def main(base_filename, train, verbose):
 
 if __name__ == '__main__':
     train = '--train' in sys.argv
-    main('models/256sgd-clip-nesterov-batchnorm200', verbose=True, train=train)
+    main('models/256rms-clip-20', verbose=True, train=train)
