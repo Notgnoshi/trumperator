@@ -42,7 +42,6 @@ Or my personal favorite (so far)
 
 ## TODO
 
-* Given a trained model, generate a number of tweets
 * Given a bunch of generated tweets, score them somehow (online poll?)
   * Grammar checker (NLTK has a grammar parser)
   * Second neural network
@@ -51,8 +50,6 @@ Or my personal favorite (so far)
 * Figure out what exactly the diversity stuff is
 * Use a smaller training set? (Last two years of tweets?)
 * Make training faster?
-* Experiment with LSTM options
-* Experiment with model size/depth
 * Filter the training data better?
 * Write the paper
 * Add `paper/paper.pdf` to repository on final commit. (Don't want to track a binary file that will change a lot)
@@ -60,7 +57,5 @@ Or my personal favorite (so far)
   * If the seed is taken from the corpus, make it not cross tweet boundaries?
 * Is this the right data representation?
   * The dataset is treated as a single corpus, should it instead be a collection of corpuses?
-* Model options:
-  * LSTM layer options
 * After training full models, look for elbows and train for less epochs
 * Add `requirements.txt` for `pip` to install from?
