@@ -27,6 +27,8 @@ from dataset import load_dataset
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 config.gpu_options.visible_device_list = "0"
+# Use just in time XLA compilation
+config.graph_options.optimizer_options.global_jit_level = tf.OptimizerOptions.ON_1
 #session = tf.Session(config=config)
 set_session(tf.Session(config=config))
 
@@ -74,16 +76,13 @@ def build_model(seq_length, num_chars, verbose):
     if verbose:
         print('Building model...')
     model = Sequential()
-    # TODO: Model size/depth?
-    # TODO: LSTM options?
-    model.add(LSTM(units=256, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    model.add(LSTM(units=256, return_sequences=True, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    model.add(BatchNormalization())
+    model.add(LSTM(units=256, unit_forget_bias=True))
     model.add(BatchNormalization())
     model.add(Dense(num_chars, activation='softmax'))
 
-    # Use SGD with gradient clipping and Nesterov momentum
-    # opt = SGD(lr=0.1, clipnorm=1.0, nesterov=True)
-    opt = RMSprop(clipnorm=1.0)
-    model.compile(loss='categorical_crossentropy', optimizer=opt)
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
     return model
 
 
@@ -107,7 +106,7 @@ def train_model(model, X, y, X_val=None, y_val=None, verbose=True, filename='tra
     """
     # Default is 32.
     BATCH_SIZE = 128
-    EPOCHS = 20
+    EPOCHS = 50
 
     if X_val is not None and y_val is not None:
         if verbose:
@@ -289,4 +288,4 @@ def main(base_filename, train, verbose):
 
 if __name__ == '__main__':
     train = '--train' in sys.argv
-    main('models/256rms-clip-20', verbose=True, train=train)
+    main('models/256-256-rms-batchnorm-50', verbose=True, train=train)
