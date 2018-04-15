@@ -39,19 +39,17 @@ I've tried the following models with mixed success. Most of the models take anyw
 
   15-20 epochs. ~1.4 loss. Pretty intelligible.
 * 128 unit with dropout. 20 epochs with RMSprop
-
-* 128 unit with dropout. 20 epochs with RMSprop
-
-  >20 epochs. Validation almost identical to training loss.
+  
+  20 epochs. Validation almost identical to training loss.
 * 128 unit with dropout. 30 epochs with RMSprop
 
   30 epochs. Validation still mostly identical to training loss.
 * 128 unit with batch normalization, gradient norm clipping, and nesterov momentum. 20 epochs with SGD
 
-  >20 epochs. Validation loss jumpy, but tends downward. Unintelligible.
+  20 epochs. Validation loss jumpy, but tends downward. Unintelligible.
 * 128 unit with batch normalization, gradient norm clipping, and nesterov momentum. 50 epochs with SGD
 
-  >50 epochs. Validation wtill jumpy, but does tend downward still. Would probably keep going, but slow to train. More intelligible, but still mostly nonsense.
+  50 epochs. Validation wtill jumpy, but does tend downward still. Would probably keep going, but slow to train. More intelligible, but still mostly nonsense.
 * 128x2 unit with batch normalization. 20 epochs with RMSprop
 
   5 epochs. ~1.4 loss. Pretty intelligible.
@@ -75,7 +73,7 @@ I've tried the following models with mixed success. Most of the models take anyw
   6 epochs. Nice curves. Validation loss started to increase. Intelligible, but has loops.
 * 256 unit with batch normalization, gradient clipping, and nesterov momentum. 200 epochs with SGD
 
-  >200 epochs. Validation loss spikey, but tends downwards. Really loves @mentions
+  200 epochs. Validation loss spikey, but tends downwards. Really loves @mentions
 * 256 unit with batch normalization, gradiend clipping, and nexterov momentum. 100 epochs with SGD and high learning rate
 
   40 epochs. Validation loss not very spikey, nice curves. Frequent loops, sometimes intelligible.
