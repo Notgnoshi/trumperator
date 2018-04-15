@@ -8,7 +8,6 @@ Generating Trump tweets with deep learning
 
 * Keras (with Tensorflow GPU backend)
 * Numpy
-* Requests-HTML
 * [trump_tweet_data_archive](http://www.trumptwitterarchive.com/)
 * spaCy NLP toolkit
 
@@ -24,38 +23,94 @@ Note that scraping the tweets myself isn't quite as simple as I'd hoped. The off
 
 ## Generating tweets
 
-Here's an example from the `experiments/model.py` script's output.
+The model is defined in `experiments/model.py`. To train that model, run `experiments/train.py`. This will save the trained model using the filename and parameters defined in `experiments/model.py`. To use an already-trained model, edit the filename in `experiments/model.py` and run the `experiments/generate.py` script, specifying the number of seeds to use as an integer argument.
 
-> Generating with diversity: 0.2
->
-> Generating with seed: "as great seeing and yesterday a smart negotiator would us"
->
-> Generated:
->
-> as great seeing and yesterday a smart negotiator would use the best thing they are doing a great job he is a great guy and the most important to be the next president of the united states  and the fake news media who can be the next president of the world
-
-Or my personal favorite (so far)
+Here are some of my favorite tweets generated so far.
 
 > should be fired the office with a real congress comments on his republican spirit and ratings with a terrible many photo of @mittromney is always a fair #bush
 
 > the best president obama is a great people to be a great president i will be interviewed on @foxandfriends tonight at pm enjoy
 
+## Models
+
+I've tried the following models with mixed success. Most of the models take anywhere from 5-35 minutes per epoch to train. Part of the reason why is the sheer size of the training set (900k+ items, plus a 200k+ validation set)
+
+* 64x6 unit with batch normalization. 50 epochs with RMSprop
+
+  15-20 epochs. ~1.4 loss. Pretty intelligible.
+* 128 unit with dropout. 20 epochs with RMSprop
+
+* 128 unit with dropout. 20 epochs with RMSprop
+
+  >20 epochs. Validation almost identical to training loss.
+* 128 unit with dropout. 30 epochs with RMSprop
+
+  30 epochs. Validation still mostly identical to training loss.
+* 128 unit with batch normalization, gradient norm clipping, and nesterov momentum. 20 epochs with SGD
+
+  >20 epochs. Validation loss jumpy, but tends downward. Unintelligible.
+* 128 unit with batch normalization, gradient norm clipping, and nesterov momentum. 50 epochs with SGD
+
+  >50 epochs. Validation wtill jumpy, but does tend downward still. Would probably keep going, but slow to train. More intelligible, but still mostly nonsense.
+* 128x2 unit with batch normalization. 20 epochs with RMSprop
+
+  5 epochs. ~1.4 loss. Pretty intelligible.
+* 128x2 unit. 20 epochs with RMSprop
+
+  5 epochs. ~1.45 loss. Training loss spiked at the end.
+* 128x3 unit with batch normalization. 20 epochs with RMSprop
+
+  6 epochs. ~1.39 loss. Validation loss really flattened. Fairly intelligible.
+* 256 unit with batch normalization and small minibatches. 20 epochs with RMSprop
+
+  7 epochs. Training and validation loss spiked at the end. Not very intelligible.
+* 256 unit with dropout. 20 epochs with RMSprop
+
+  5 epochs. Nice curves. Validation loss really flattened. Pretty intelligible
+* 256 unit with batch normalization. 20 epochs with RMSprop
+
+  5 epochs. Nice curves. Validation loss started to slowly increase. Fairly intelligible, some generated snippets were empty
+* 256 unit with batch normalization and gradient clipping. 20 epochs with RMSprop
+
+  6 epochs. Nice curves. Validation loss started to increase. Intelligible, but has loops.
+* 256 unit with batch normalization, gradient clipping, and nesterov momentum. 200 epochs with SGD
+
+  >200 epochs. Validation loss spikey, but tends downwards. Really loves @mentions
+* 256 unit with batch normalization, gradiend clipping, and nexterov momentum. 100 epochs with SGD and high learning rate
+
+  40 epochs. Validation loss not very spikey, nice curves. Frequent loops, sometimes intelligible.
+* 256x2 unit with batch normalization. 50 epochs with RMSprop
+
+  10 epochs. Large gap between validation and training losses. Validation loss increasing. Fairly intelligible.
+* 512 unit with batch normalization and large minibatches. 20 epochs with RMSprop
+
+  5 epochs, after which validation loss increases substantially. Somewhat intelligible.
+* 512 unit with batch normalization. 20 epochs with RMSprop
+
+  6 epochs, after which validation loss icnreases substantially. Pretty intelligible.
+* 512 unit with dropout. 20 epochs with RMSprop
+
+  3 epochs, after which validation loss flattened. Pretty intelligible.
+* 512x2 unit with batch normalization. 20 epochs with RMSprop
+
+  5 epochs. After which both loses grew spikey. Fairly intelligible, but chops off words.
+* 1024 unit with batch normalization. 20 epochs with RMSprop
+
+  5 epochs. After which both losses grew quite spikey. All it did was repeat words over and over.
+* 2048 unit with batch normalization. 50 epochs with RMSprop
+
+  Worthless. Training loss barely changed, but validation loss was quite spikey. Generates actual words, but they mean nothing.
+
 ## TODO
 
 * Given a bunch of generated tweets, score them somehow (online poll?)
-  * Grammar checker (NLTK has a grammar parser)
+  * Grammar checker (NLTK and SpaCy have grammar parsers)
   * Second neural network
     * Dr. Pyeatt leans this way, and actually to focus on this. (Classify tweet as written by user X or not written by user X.) I would need to generate a dataset containing tweets from multiple users.
   * Online poll, filter 'good' generated tweets by hand.
 * Figure out what exactly the diversity stuff is
 * Use a smaller training set? (Last two years of tweets?)
-* Make training faster?
 * Filter the training data better?
 * Write the paper
 * Add `paper/paper.pdf` to repository on final commit. (Don't want to track a binary file that will change a lot)
-* Seed not taken directly from the corpus?
-  * If the seed is taken from the corpus, make it not cross tweet boundaries?
-* Is this the right data representation?
-  * The dataset is treated as a single corpus, should it instead be a collection of corpuses?
 * After training full models, look for elbows and train for less epochs
-* Add `requirements.txt` for `pip` to install from?
