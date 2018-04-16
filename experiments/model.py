@@ -20,9 +20,9 @@ GEN_LEN = 280
 # Default is 32.
 BATCH_SIZE = 128
 # Number of epochs to train for. RMSprop is *much* faster than SGD and only needs 5-10 epochs
-EPOCHS = 20
+EPOCHS = 50
 # Extensionless filename to save model configuration, weights, plots, and generated text to
-BASENAME = 'models/128-128-rms-batchnorm-20'
+BASENAME = 'models/64x6-rms-batchnorm-50'
 
 
 def build_model(seq_length, num_chars, verbose):
@@ -32,9 +32,17 @@ def build_model(seq_length, num_chars, verbose):
     if verbose:
         print('Building model...')
     model = Sequential()
-    model.add(LSTM(units=128, return_sequences=True, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    model.add(LSTM(units=64, return_sequences=True, input_shape=(seq_length, num_chars), unit_forget_bias=True))
     model.add(BatchNormalization())
-    model.add(LSTM(units=128, unit_forget_bias=True))
+    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    model.add(BatchNormalization())
+    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    model.add(BatchNormalization())
+    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    model.add(BatchNormalization())
+    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    model.add(BatchNormalization())
+    model.add(LSTM(units=64, unit_forget_bias=True))
     model.add(BatchNormalization())
     model.add(Dense(num_chars, activation='softmax'))
 
