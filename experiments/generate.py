@@ -34,7 +34,7 @@ def generate_sequence(model, seed, length, diversities,
     for diversity in diversities:
         generated = ''
         sequence = seed
-        generated += seed
+        # generated += seed
 
         if verbose:
             print('='*10)
