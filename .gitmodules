@@ -1,0 +1,3 @@
+[submodule "experiments/textgenrnn"]
+	path = experiments/textgenrnn
+	url = git@github.com:minimaxir/textgenrnn.git
