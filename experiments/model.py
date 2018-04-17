@@ -4,8 +4,10 @@ used by the rest of the workflow.
 """
 
 from datetime import datetime
-from keras.layers import LSTM, Dense, BatchNormalization
+# from keras.layers import LSTM, Dense, BatchNormalization
 from keras.models import Sequential, model_from_json
+
+from textgenrnn.textgenrnn import textgenrnn
 
 # Turn the corpus into sequences 60 characters long
 SEQ_LEN = 60
@@ -25,28 +27,29 @@ EPOCHS = 50
 BASENAME = 'models/64x6-rms-batchnorm-50'
 
 
-def build_model(seq_length, num_chars, verbose):
+def build_model(verbose):
     """
         Builds an LSTM model for generating text.
     """
     if verbose:
         print('Building model...')
-    model = Sequential()
-    model.add(LSTM(units=64, return_sequences=True, input_shape=(seq_length, num_chars), unit_forget_bias=True))
-    model.add(BatchNormalization())
-    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
-    model.add(BatchNormalization())
-    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
-    model.add(BatchNormalization())
-    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
-    model.add(BatchNormalization())
-    model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
-    model.add(BatchNormalization())
-    model.add(LSTM(units=64, unit_forget_bias=True))
-    model.add(BatchNormalization())
-    model.add(Dense(num_chars, activation='softmax'))
+    # model = Sequential()
+    # model.add(LSTM(units=64, return_sequences=True, input_shape=(seq_length, num_chars), unit_forget_bias=True))
+    # model.add(BatchNormalization())
+    # model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    # model.add(BatchNormalization())
+    # model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    # model.add(BatchNormalization())
+    # model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    # model.add(BatchNormalization())
+    # model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
+    # model.add(BatchNormalization())
+    # model.add(LSTM(units=64, unit_forget_bias=True))
+    # model.add(BatchNormalization())
+    # model.add(Dense(num_chars, activation='softmax'))
 
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+    # model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+    model = textgenrnn(name='trumperator')
     return model
 
 

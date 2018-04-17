@@ -33,7 +33,7 @@ def remove_mentions(vTEXT):
     return vTEXT
 
 
-ALPHABET = frozenset(string.ascii_lowercase + string.punctuation + ' #@')
+ALPHABET = frozenset(string.ascii_letters + string.punctuation + ' #@')
 
 
 def preprocess(text, alphabet):
@@ -63,6 +63,8 @@ def load_dataset(files, verbose=True):
     dataset = (t['text']for t in dataset)
     # Remove URLs from the tweets.
     dataset = (remove_urls(t) for t in dataset)
+    # # Remove @mentions from tweets.
+    # dataset = (remove_mentions(t) for t in dataset)
     # Preprocess each tweet, filtering out nonascii alphabetic
     dataset = (''.join(preprocess(t, ALPHABET)) for t in dataset)
 
