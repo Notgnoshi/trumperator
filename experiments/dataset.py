@@ -40,7 +40,7 @@ def preprocess(text, alphabet):
     """
         Preprocess text using the frozenset `alphabet` given.
     """
-    return filter(alphabet.__contains__, text.lower())
+    return filter(alphabet.__contains__, text)
 
 def load_dataset(files, verbose=True):
     """
@@ -66,7 +66,7 @@ def load_dataset(files, verbose=True):
     # # Remove @mentions from tweets.
     # dataset = (remove_mentions(t) for t in dataset)
     # Preprocess each tweet, filtering out nonascii alphabetic
-    dataset = (''.join(preprocess(t, ALPHABET)) for t in dataset)
+    dataset = [''.join(preprocess(t, ALPHABET)) for t in dataset]
 
     return dataset
 

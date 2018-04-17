@@ -104,7 +104,8 @@ def main(verbose):
     model = build_model(verbose=True)
     model.train_new_model(
         dataset,
-        context_labels=[],
+        # Label each tweet as a Trump tweet. Useful when combining multiple sources
+        context_labels=['trump' for t in dataset],
         num_epochs=5,
         gen_epochs=1,
         batch_size=128,
