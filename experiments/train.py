@@ -25,6 +25,8 @@ from generate import generate
 from model import (BASENAME, BATCH_SIZE, EPOCHS, PERCENT_VALIDATION,
                    SEQ_LEN, SEQ_STEP, build_model, save_model)
 
+from textgenrnn.textgenrnn import textgenrnn
+
 # Hack to keep keras from allocating the whole damn gpu.
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -101,12 +103,12 @@ def main(verbose):
     # # Generate sample tweets using 10 random seeds from the corpus.
     # generate(BASENAME, model, corpus, c2i, i2c, nc, 10, verbose)
 
-    model = build_model(verbose=True)
-    model.train_new_model(
+    gen = textgenrnn()
+    gen.train_new_model(
         dataset,
         # Label each tweet as a Trump tweet. Useful when combining multiple sources
         context_labels=['trump' for t in dataset],
-        num_epochs=5,
+        num_epochs=6,
         gen_epochs=1,
         batch_size=128,
         prop_keep=1.0,
@@ -117,6 +119,7 @@ def main(verbose):
         dim_embeddings=100,
         word_level=False,
     )
+    gen.generate(10, temperature=0.2)
 
 
 if __name__ == '__main__':
