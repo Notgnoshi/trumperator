@@ -11,25 +11,71 @@
     Department of Mathematics and Computer Science\\
     South Dakota School of Mines and Technology\\
     Rapid City SD, 57701\\
-    \texttt{\href{mailto:austin.gill@mines.sdsmt.edu}{austin.gill@mines.sdsmt.edu}} \\
+    \texttt{\href{mailto:austin.gill@mines.sdsmt.edu}{austin.gill@mines.sdsmt.edu}}\\
 }
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-    Here's an abstract. Surely you can abstract this into an actual abstract, right?
+    \todoinline{Write an abstract, but after the paper is finished.}
 \end{abstract}
 
 \section{Introduction}
-    Here's the introduction. Consider yourself introduced. Here's some more introductory remarks so I can see the document layout better.
+    \todoinline{
+        \begin{itemize}
+            \item Purpose
+            \item Background and general research (Haiku paper using word association norms?)
+            \item Mention original intent of generating haikus?
+            \item Introduce and defend the final model
+            \item Introduce the experimental method used to verify the model
+        \end{itemize}
+    }
 
-    \lipsum{10}
+\section{Experiments}
+    \todoinline{
+        \begin{itemize}
+            \item Initial attempt based on generation of a large book (inspired by\dots)
+            \item Formulation of the input/output/generation data form? (How to sample with some diversity)
+            \item Different architectures attempted (Different plots, but the plots are all pngs\dots)
+            \item Final architecture inspired by some paper that I have to find
+            \item number epochs, optimizer, etc.
+        \end{itemize}
+    }
 
-\section{Stuff}
-    Here's some stuff you didn't know!
+\section{Results}
+    \todoinline{
+        \begin{itemize}
+            \item Hack validation data into training and produce plots?
+            \item Give example tweets?
+            \item Grammar, spelling, etc.
+            \item Accuracy is meaningless because you're trying to create \textit{new} tweets. This is where the sampling with diversities comes in. The higher diversity the more creative the network is, but the more meaningless it becomes.
+            \item Produce a largeish amount of generated tweets.
+        \end{itemize}
+    }
 
-\section{Conclusion}
-    \todoinline{Conclude something.}
+\section{Discussion}
+    \todoinline{
+        \begin{itemize}
+            \item How good was it?
+            \item Accuracy meaningless because attempt is creative generation.
+            \item Did it pick up on patterns backed by data?
+        \end{itemize}
+    }
 
+\section{Future Work}
+    \todoinline{
+        \begin{itemize}
+            \item Word association norms?
+            \item Embeddings?
+            \item Combining sources?
+            \item Grammar and spelling
+            \item GAN
+            \item Crowd-sourced adversarial network as a training component?
+        \end{itemize}
+    }
+
+\bibliographystyle{ieeetr}
+% Automatically places a \section*{References}...
+\bibliography{paper}
 \end{document}

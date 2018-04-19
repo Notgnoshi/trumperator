@@ -39,7 +39,7 @@ I've tried the following models with mixed success. Most of the models take anyw
 
   15-20 epochs. ~1.4 loss. Pretty intelligible.
 * 128 unit with dropout. 20 epochs with RMSprop
-  
+
   20 epochs. Validation almost identical to training loss.
 * 128 unit with dropout. 30 epochs with RMSprop
 
@@ -112,3 +112,4 @@ I've tried the following models with mixed success. Most of the models take anyw
 * Write the paper
 * Add `paper/paper.pdf` to repository on final commit. (Don't want to track a binary file that will change a lot)
 * After training full models, look for elbows and train for less epochs
+* Update README at submission time to show how to run scripts, etc.
