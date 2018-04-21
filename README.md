@@ -49,7 +49,7 @@ I've tried the following models with mixed success. Most of the models take anyw
   20 epochs. Validation loss jumpy, but tends downward. Unintelligible.
 * 128 unit with batch normalization, gradient norm clipping, and nesterov momentum. 50 epochs with SGD
 
-  50 epochs. Validation wtill jumpy, but does tend downward still. Would probably keep going, but slow to train. More intelligible, but still mostly nonsense.
+  50 epochs. Validation still jumpy, but does tend downward still. Would probably keep going, but slow to train. More intelligible, but still mostly nonsense.
 * 128x2 unit with batch normalization. 20 epochs with RMSprop
 
   5 epochs. ~1.4 loss. Pretty intelligible.
@@ -59,7 +59,7 @@ I've tried the following models with mixed success. Most of the models take anyw
 * 128x3 unit with batch normalization. 20 epochs with RMSprop
 
   6 epochs. ~1.39 loss. Validation loss really flattened. Fairly intelligible.
-* 256 unit with batch normalization and small minibatches. 20 epochs with RMSprop
+* 256 unit with batch normalization and small parallel training batches. 20 epochs with RMSprop
 
   7 epochs. Training and validation loss spiked at the end. Not very intelligible.
 * 256 unit with dropout. 20 epochs with RMSprop
@@ -74,18 +74,18 @@ I've tried the following models with mixed success. Most of the models take anyw
 * 256 unit with batch normalization, gradient clipping, and nesterov momentum. 200 epochs with SGD
 
   200 epochs. Validation loss spikey, but tends downwards. Really loves @mentions
-* 256 unit with batch normalization, gradiend clipping, and nexterov momentum. 100 epochs with SGD and high learning rate
+* 256 unit with batch normalization, gradient clipping, and nesterov momentum. 100 epochs with SGD and high learning rate
 
   40 epochs. Validation loss not very spikey, nice curves. Frequent loops, sometimes intelligible.
 * 256x2 unit with batch normalization. 50 epochs with RMSprop
 
   10 epochs. Large gap between validation and training losses. Validation loss increasing. Fairly intelligible.
-* 512 unit with batch normalization and large minibatches. 20 epochs with RMSprop
+* 512 unit with batch normalization and large parallel training batches. 20 epochs with RMSprop
 
   5 epochs, after which validation loss increases substantially. Somewhat intelligible.
 * 512 unit with batch normalization. 20 epochs with RMSprop
 
-  6 epochs, after which validation loss icnreases substantially. Pretty intelligible.
+  6 epochs, after which validation loss increases substantially. Pretty intelligible.
 * 512 unit with dropout. 20 epochs with RMSprop
 
   3 epochs, after which validation loss flattened. Pretty intelligible.
