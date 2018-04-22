@@ -3,4 +3,4 @@
 	url = git@github.com:minimaxir/textgenrnn.git
 [submodule "data/trump_tweet_data_archive"]
 	path = data/trump_tweet_data_archive
-    url = git@github.com:bpb27/trump_tweet_data_archive.git
+	url = git@github.com:bpb27/trump_tweet_data_archive.git
