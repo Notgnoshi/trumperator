@@ -40,7 +40,7 @@ def preprocess(text, alphabet):
     """
         Preprocess text using the frozenset `alphabet` given.
     """
-    return filter(alphabet.__contains__, text)
+    return filter(alphabet.__contains__, text.lower())
 
 def load_dataset(files, verbose=True):
     """

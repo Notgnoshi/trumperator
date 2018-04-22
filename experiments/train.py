@@ -25,7 +25,7 @@ from generate import generate
 from model import (BASENAME, BATCH_SIZE, EPOCHS, PERCENT_VALIDATION,
                    SEQ_LEN, SEQ_STEP, build_model, save_model)
 
-from textgenrnn.textgenrnn import textgenrnn
+# from textgenrnn.textgenrnn import textgenrnn
 
 # Hack to keep keras from allocating the whole damn gpu.
 config = tf.ConfigProto()
@@ -76,50 +76,50 @@ def plot_model_loss(filename, hist, verbose=True):
 
 def main(verbose):
     dataset = load_dataset(glob('../data/trump_tweet_data_archive/condensed_*.json.zip'), verbose)
-    # corpus, sequences, next_chars, c2i, i2c, nc = seq_data(dataset, SEQ_LEN, SEQ_STEP, verbose)
+    corpus, sequences, next_chars, c2i, i2c, nc = seq_data(dataset, SEQ_LEN, SEQ_STEP, verbose)
 
-    # if verbose:
-    #     print(f'corpus length: {len(corpus)}')
-    #     print(f'num characters: {nc}')
-    #     print(f'number of sequences: {len(sequences)}')
+    if verbose:
+        print(f'corpus length: {len(corpus)}')
+        print(f'num characters: {nc}')
+        print(f'number of sequences: {len(sequences)}')
 
-    # # The data is shuffled so the validation data isn't simply the latest 20% of tweets
-    # X, y = vec_data(sequences, next_chars, SEQ_LEN, nc, c2i, verbose)
-    # n = len(X)
-    # num_val = int(PERCENT_VALIDATION * n)
-    # X_val = X[n - num_val:]
-    # y_val = y[n - num_val:]
+    # The data is shuffled so the validation data isn't simply the latest 20% of tweets
+    X, y = vec_data(sequences, next_chars, SEQ_LEN, nc, c2i, verbose)
+    n = len(X)
+    num_val = int(PERCENT_VALIDATION * n)
+    X_val = X[n - num_val:]
+    y_val = y[n - num_val:]
 
-    # X_train = X[:n - num_val]
-    # y_train = y[:n - num_val]
+    X_train = X[:n - num_val]
+    y_train = y[:n - num_val]
 
-    # if verbose:
-    #     print(f'Number validation samples: {num_val}')
+    if verbose:
+        print(f'Number validation samples: {num_val}')
 
-    # model = build_model(SEQ_LEN, nc, verbose)
-    # history = train_model(model, X_train, y_train, X_val, y_val, verbose)
-    # plot_model_loss(BASENAME, history, verbose)
-    # save_model(model, BASENAME, verbose)
-    # # Generate sample tweets using 10 random seeds from the corpus.
-    # generate(BASENAME, model, corpus, c2i, i2c, nc, 10, verbose)
+    model = build_model(SEQ_LEN, nc, verbose)
+    history = train_model(model, X_train, y_train, X_val, y_val, verbose)
+    plot_model_loss(BASENAME, history, verbose)
+    save_model(model, BASENAME, verbose)
+    # Generate sample tweets using 10 random seeds from the corpus.
+    generate(BASENAME, model, corpus, c2i, i2c, nc, 10, verbose)
 
-    gen = textgenrnn()
-    gen.train_new_model(
-        dataset,
-        # Label each tweet as a Trump tweet. Useful when combining multiple sources
-        context_labels=['trump' for t in dataset],
-        num_epochs=6,
-        gen_epochs=1,
-        batch_size=128,
-        prop_keep=1.0,
-        rnn_layers=2,
-        rnn_size=128,
-        rnn_bidirectional=False,
-        max_length=40,
-        dim_embeddings=100,
-        word_level=False,
-    )
-    gen.generate(10, temperature=0.2)
+    # gen = textgenrnn()
+    # gen.train_new_model(
+    #     dataset,
+    #     # Label each tweet as a Trump tweet. Useful when combining multiple sources
+    #     context_labels=['trump' for t in dataset],
+    #     num_epochs=6,
+    #     gen_epochs=1,
+    #     batch_size=128,
+    #     prop_keep=1.0,
+    #     rnn_layers=2,
+    #     rnn_size=128,
+    #     rnn_bidirectional=False,
+    #     max_length=40,
+    #     dim_embeddings=100,
+    #     word_level=False,
+    # )
+    # gen.generate(10, temperature=0.2)
 
 
 if __name__ == '__main__':
