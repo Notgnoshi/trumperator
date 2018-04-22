@@ -46,3 +46,7 @@ t = textgenrnn(config_path='trumperator_config.json',
                 weights_path='trumperator_weights.hdf5')
 t.generate(10, temperature=0.2)
 ```
+
+## The Paper
+
+The paper is found in `paper/paper.pdf`, or can be made with the provided makefile.
