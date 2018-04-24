@@ -10,8 +10,6 @@ from keras.layers import LSTM, Dense, BatchNormalization
 # from keras.layers import CuDNNLSTM as LSTM
 from keras.models import Sequential, model_from_json
 
-# from textgenrnn.textgenrnn import textgenrnn
-
 # Turn the corpus into sequences 60 characters long
 SEQ_LEN = 60
 # Make each sequence offset from each other by 3 characters
@@ -36,7 +34,9 @@ def build_model(seq_length, num_chars, verbose):
     """
     if verbose:
         print('Building model...')
+
     model = Sequential()
+
     model.add(LSTM(units=64, return_sequences=True, input_shape=(seq_length, num_chars), unit_forget_bias=True))
     model.add(BatchNormalization())
     model.add(LSTM(units=64, return_sequences=True, unit_forget_bias=True))
@@ -52,7 +52,6 @@ def build_model(seq_length, num_chars, verbose):
     model.add(Dense(num_chars, activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
-    # model = textgenrnn(name='trumperator')
     return model
 
 

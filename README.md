@@ -33,7 +33,7 @@ The model is defined in `experiments/model.py`. To train that model, run `experi
 Here are some of my favorite tweets generated so far.
 
 > should be fired the office with a real congress comments on his republican spirit and ratings with a terrible many photo of @mittromney is always a fair #bush
-
+>
 > the best president obama is a great people to be a great president i will be interviewed on @foxandfriends tonight at pm enjoy
 
 If you want to try to more sophisticated [Textgenrnn](https://github.com/minimaxir/textgenrnn) model, trained by me, run the following in the `experiments/` folder.
@@ -42,8 +42,8 @@ If you want to try to more sophisticated [Textgenrnn](https://github.com/minimax
 from textgenrnn.textgenrnn import textgenrnn
 # Files found in trumperator/experiments/
 t = textgenrnn(config_path='trumperator_config.json',
-                vocab_path='trumperator_vocab.json',
-                weights_path='trumperator_weights.hdf5')
+               vocab_path='trumperator_vocab.json',
+               weights_path='trumperator_weights.hdf5')
 t.generate(10, temperature=0.2)
 ```
 

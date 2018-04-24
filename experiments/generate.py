@@ -13,15 +13,19 @@ from dataset import load_dataset, seq_data
 from model import BASENAME, DIVERSITIES, GEN_LEN, SEQ_LEN, SEQ_STEP, load_model
 
 
-def sample_predictions(preds, temperature=1.0):
+def sample_predictions(preds, diversity=1.0):
     """
-        Helper function to sample an index from a probability array.
+        Helper function to sample an index from a probability array
+        with some diversity. The diversity is so that we don't simply
+        take the largest probability. This is so we get some amount
+        of "creativity".
     """
     preds = np.asarray(preds).astype('float64')
-    preds = np.log(preds) / temperature
+    preds = np.log(preds) / diversity
     exp_preds = np.exp(preds)
     preds = exp_preds / np.sum(exp_preds)
     probas = np.random.multinomial(1, preds, 1)
+    # Return the index of the largest element
     return np.argmax(probas)
 
 
@@ -33,7 +37,7 @@ def generate_sequence(model, seed, length, diversities,
     g = []
     for diversity in diversities:
         generated = ''
-        sequence = seed
+        # Avoid saving the seed as "generated" text for easier parsing, reading, and interpretation
         # generated += seed
 
         if verbose:
@@ -44,15 +48,15 @@ def generate_sequence(model, seed, length, diversities,
 
         for _ in range(length):
             X_pred = np.zeros((1, seq_length, num_chars))
-            for t, c in enumerate(sequence):
+            for t, c in enumerate(seed):
                 X_pred[0, t, char_to_indices[c]] = 1
 
             predictions = model.predict(X_pred, verbose=0)[0]
             next_index = sample_predictions(predictions, diversity)
             next_char = indices_to_char[next_index]
             generated += next_char
-            # TODO: Don't use a list for this, use a queue
-            sequence = sequence[1:] + next_char
+            # Move the seed down one character to generate the next character
+            seed = seed[1:] + next_char
         g.append(generated)
         if verbose:
             print(generated)
@@ -61,7 +65,7 @@ def generate_sequence(model, seed, length, diversities,
 
 def save_generated(generated, filename):
     """
-        Saves the generated text strings to the given file.
+        Saves the generated text to the given (extensionless) filename.
     """
     with open(f'{filename}.txt', 'a') as f:
         # Flatten the generated list because it's a list of samples, each with a different diversity
@@ -88,7 +92,9 @@ def generate(basename, model, corpus, c2i, i2c, num_chars, num_seeds, verbose):
 
 
 def main(num_seeds, verbose):
+    # Load the dataset
     dataset = load_dataset(glob('../data/trump_tweet_data_archive/condensed_*.json.zip'), verbose)
+    # We don't need to vectorize the data, but we do need to chunk it into redundant sequences
     corpus, _, _, c2i, i2c, nc = seq_data(dataset, SEQ_LEN, SEQ_STEP, verbose)
     model = load_model(BASENAME, verbose)
     generate(BASENAME, model, corpus, c2i, i2c, nc, num_seeds, verbose)

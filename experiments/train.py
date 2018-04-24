@@ -13,7 +13,7 @@ import matplotlib
 
 # Hack to enable matplotlib to save a figure without an X server running (SSH sessions)
 # https://stackoverflow.com/a/4706614
-# Needs to be ran before `import matplotlib.pyplot as plt`
+# Needs to run before `import matplotlib.pyplot as plt`
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
@@ -25,9 +25,9 @@ from generate import generate
 from model import (BASENAME, BATCH_SIZE, EPOCHS, PERCENT_VALIDATION,
                    SEQ_LEN, SEQ_STEP, build_model, save_model)
 
-# from textgenrnn.textgenrnn import textgenrnn
+from textgenrnn.textgenrnn import textgenrnn
 
-# Hack to keep keras from allocating the whole damn gpu.
+# Hack to keep Keras from allocating the whole damn gpu.
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 config.gpu_options.visible_device_list = "0"
@@ -85,6 +85,7 @@ def main(verbose):
 
     # The data is shuffled so the validation data isn't simply the latest 20% of tweets
     X, y = vec_data(sequences, next_chars, SEQ_LEN, nc, c2i, verbose)
+    # Split off the last 20% as validation data for pretty graphs
     n = len(X)
     num_val = int(PERCENT_VALIDATION * n)
     X_val = X[n - num_val:]
@@ -99,10 +100,13 @@ def main(verbose):
     model = build_model(SEQ_LEN, nc, verbose)
     history = train_model(model, X_train, y_train, X_val, y_val, verbose)
     plot_model_loss(BASENAME, history, verbose)
+    # Save the trained model so we don't have to wait 25 hours to generate another 10 tweet sample
     save_model(model, BASENAME, verbose)
     # Generate sample tweets using 10 random seeds from the corpus.
     generate(BASENAME, model, corpus, c2i, i2c, nc, 10, verbose)
 
+    # # Train the Textgenrnn model on our dataset. The README has information on how to take
+    # # a trained model and generate tweets. (It's three lines of code)
     # gen = textgenrnn()
     # gen.train_new_model(
     #     dataset,
